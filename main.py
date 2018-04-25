@@ -8,9 +8,9 @@ url = 'https://www.dmv.ca.gov/wasapp/foa/clear.do?goTo=officeVisit&localeName=en
 driver = webdriver.Chrome()
 #driver = webdriver.Firefox()
 
-firstname = 'John'#'Yevheniia'
-lastname = 'Jonson'#'Konieva'
-tel = '1234567890'#'6506031270'
+firstname = 'John'
+lastname = 'Jonson'
+tel = '1234567890'
 
 dmv = ['SANTA CLARA', 'SAN JOSE', 'LOS GATOS', 'SANTA TERESA', 'FREMONT', 'HAYWARD', 'SAN MATEO', 'REDWOOD CITY']
 
