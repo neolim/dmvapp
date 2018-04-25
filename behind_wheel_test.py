@@ -8,11 +8,11 @@ url = 'https://www.dmv.ca.gov/wasapp/foa/clear.do?goTo=driveTest&localeName=en'
 driver = webdriver.Chrome()
 #driver = webdriver.Firefox()
 
-firstname = 'Yevheniia'#'Yevheniia'
-lastname = 'Konieva'#'Konieva'
-tel = '6506031270'#'6506031270'
-dl_number = 'Y4443083'
-birthday = '08091995'
+firstname = 'John'
+lastname = 'Johnson'
+tel = '1234567890'
+dl_number = 'A1234567'
+birthday = '01011900'
 
 
 dmv = ['SANTA CLARA', 'SAN JOSE', 'LOS GATOS', 'SANTA TERESA', 'FREMONT', 'HAYWARD', 'SAN MATEO', 'REDWOOD CITY']
