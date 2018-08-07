@@ -2,24 +2,27 @@ from selenium import webdriver
 import datetime
 import time
 import re
-
-url = 'https://www.dmv.ca.gov/wasapp/foa/clear.do?goTo=officeVisit&localeName=en'
-
-driver = webdriver.Chrome()
-#driver = webdriver.Firefox()
+import os
 
 firstname = 'John'
 lastname = 'Jonson'
 tel = '1234567890'
-
 dmv = ['SANTA CLARA', 'SAN JOSE', 'LOS GATOS', 'SANTA TERESA', 'FREMONT', 'HAYWARD', 'SAN MATEO', 'REDWOOD CITY']
+apnt_week_day = '^[Mon|Tue|Wed|Thu|Fri].*$' #remove uncomfortable days. ex. ^[Mon|Wed].*$
+
+url = 'https://www.dmv.ca.gov/wasapp/foa/clear.do?goTo=officeVisit&localeName=en'
+project_root = os.path.abspath(os.path.dirname(__file__))
+driver_bin = os.path.join(project_root, "bin/chromedriver_2.41")
+driver = webdriver.Chrome(executable_path=driver_bin)
 
 window_idx = 0
 dates = []
 
 for office in dmv:
-    #time.sleep(5)
+
     driver.get(url)
+    # if stuck on chrome pages add timeout
+    # time.sleep(1)
     driver.find_element_by_id("first_name").send_keys(firstname)
     driver.find_element_by_id("last_name").send_keys(lastname)
     driver.find_element_by_name("telArea").send_keys(tel[:3])
@@ -28,13 +31,10 @@ for office in dmv:
 
     driver.find_element_by_xpath("//select[@name='officeId']/option[text()='" + office + "']").click()
     driver.find_element_by_id("one_task").click()
-    driver.find_element_by_id("taskDLO").click()
-
+    driver.find_element_by_id("taskCID").click()
     driver.find_element_by_name("ApptForm").submit()
-
     current_date = driver.find_elements_by_tag_name('strong')[3].text
-    #pattern = re.compile("^[Mon|Tue|Wed|Thu|Fri].*$")
-    pattern = re.compile("^[Wed|Fri].*$")
+    pattern = re.compile(apnt_week_day)
     if pattern.match(current_date):
         dates.insert(window_idx, datetime.datetime.strptime(current_date, "%A, %B %d, %Y at %I:%M %p").strftime("%Y%m%d"))
     else:
