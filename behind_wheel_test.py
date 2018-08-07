@@ -2,26 +2,28 @@ from selenium import webdriver
 import datetime
 import time
 import re
+import os
 
-url = 'https://www.dmv.ca.gov/wasapp/foa/clear.do?goTo=driveTest&localeName=en'
-
-driver = webdriver.Chrome()
-#driver = webdriver.Firefox()
 
 firstname = 'John'
 lastname = 'Johnson'
 tel = '1234567890'
-dl_number = 'A1234567'
+dl_number = 'A12345678'
 birthday = '01011900'
-
-
 dmv = ['SANTA CLARA', 'SAN JOSE', 'LOS GATOS', 'SANTA TERESA', 'FREMONT', 'HAYWARD', 'SAN MATEO', 'REDWOOD CITY']
+apnt_week_day = '^[Mon|Tue|Wed|Thu|Fri].*$' #remove uncomfortable days. ex. ^[Mon|Wed].*$
+
+url = 'https://www.dmv.ca.gov/wasapp/foa/clear.do?goTo=driveTest&localeName=en'
+project_root = os.path.abspath(os.path.dirname(__file__))
+driver_bin = os.path.join(project_root, "bin/chromedriver_2.41")
+driver = webdriver.Chrome(executable_path=driver_bin)
 
 window_idx = 0
 dates = []
 
 for office in dmv:
-    #time.sleep(5)
+    # if stuck add timeout
+    #time.sleep(1)
     driver.get(url)
     driver.find_element_by_xpath("//select[@name='officeId']/option[text()='" + office + "']").click()
 
@@ -41,10 +43,8 @@ for office in dmv:
     driver.find_element_by_name("telSuffix").send_keys(tel[6:])
 
     driver.find_element_by_name("ApptForm").submit()
-
-    current_date = driver.find_elements_by_tag_name('strong')[3].text
-    #pattern = re.compile("^[Mon|Tue|Wed|Thu|Fri].*$")
-    pattern = re.compile("^[Wed|Fri].*$")
+    current_date = driver.find_elements_by_tag_name('strong')[2].text
+    pattern = re.compile(apnt_week_day)
     if pattern.match(current_date):
         dates.insert(window_idx, datetime.datetime.strptime(current_date, "%A, %B %d, %Y at %I:%M %p").strftime("%Y%m%d"))
     else:
@@ -68,6 +68,6 @@ for i in range(window_idx - min_window):
     driver.close()
 
 driver.switch_to.window(driver.window_handles[0])
-driver.find_elements_by_id("ApptForm")[0].submit()
+driver.find_element_by_link_text("Back").click()
 driver.find_element_by_xpath("//select[@name='officeId']/option[text()='" + lowest_dmv + "']").click()
 driver.find_element_by_name("ApptForm").submit()
